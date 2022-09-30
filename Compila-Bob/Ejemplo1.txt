@@ -1,6 +1,6 @@
 compilar_coatl{
  
-	E_ n: 45;
+	E_ n: "hola";
 	#Hola esto es un comentario
 	repito hasta que(n,50):{
 		 
