@@ -25,25 +25,25 @@ public class Compilabob {
 	//variebales para semantica-------------------------------
     String Type="", Valor=""; //variables cache para capturar el par
     String lugar = "";
-    java.util.ArrayList<ParOrd> ParOrdenado = new java.util.ArrayList<ParOrd>(); //Lista de IDs
+	Token var;
     //--------------------------------------------------------
 	public static void main(String args[])  { 
 		Compilabob compilador = new Compilabob(System.in); 
 		try { 
-			compilador.Codigo(); 
+			compilador.Codigo();
 		}catch( Exception e ){   
 			System.out.println("\nEXCEPTION e MAIN\n" +"Sentencias incorrectas encontradas: "+compilador.sentencias_inco);
 		}
 		catch( TokenMgrError e ) { 
 			System.out.println( "Error de Token" );
 		} 
-		if(compilador.errormsg != "\n" && compilador.sentencias_inco != 0){
+		if(compilador.errormsg == "\n" && compilador.sentencias_inco == 0){
 			System.out.println("An"+"\u00e1"+"lisis l"+"\u00e9"+"xico y sint"+"\u00e1"+"ctico ejecutados con "+"\u00e9"+"xito");
 		}else{
 			System.out.println(compilador.errormsg);
 		}
 		System.out.println("\nFINAL PRINT\n" +"Sentencias incorrectas encontradas: "+compilador.sentencias_inco);
-		  
+		System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla);
 	}  
 	
 	
@@ -103,6 +103,8 @@ TOKEN:
 //"E_"(["A"-"Z","a"-"z"](["A"-"Z","a"-"z","0"-"9"])*)  
 // NOT ~ 
 
+//<CADENAS: ("\""(~["\"","#","\n","\r","#","#","\r","\n"])*"\"")>//31
+
 TOKEN: 
 {
 	<CADENAS: ("\""(~["\"","#","\n","\r","#","#","\r","\n"])*"\"")>//31
@@ -116,18 +118,18 @@ TOKEN:
 |<NUMDECIMAL: (["0"-"9"])+ "." (["0"-"9"])+ | (["0"-"9"])+ "." | "." (["0"-"9"])+> //35
 |<ID_CADENA: "C_">//36
 |<BOOLEANO: "L_">//37
-|<EST_LOGIC:("falso"|"verdad")>//37
+|<EST_LOGIC:("falso"|"verdad")>//38
 }   
 
 TOKEN: 
 {
-	<IDENTIFICADOR:["A"-"Z","a"-"z"](["A"-"Z","a"-"z","0"-"9"])*> //38
+	<IDENTIFICADOR:["A"-"Z","a"-"z"](["A"-"Z","a"-"z","0"-"9"])*> //39
 
 }
 
 TOKEN: 
 { 
-	<UNKNOW : ~[]> //39
+	<UNKNOW : ~[]> //40
 }
 
 //------------------------------- ANÁLISIS SINTACTICO - AREA DE GRAMATICAS ----------------------------------------------------
@@ -161,8 +163,8 @@ Declaracion()   // Declaracion de Variables k
 | Ciclo_RepitoMientras()
 | Decide()
 | Muestra()
-|error()
-|errorDOBLElinea()
+| error()
+| errorDOBLElinea()
   )
 }
 catch (ParseException e) {
@@ -231,8 +233,14 @@ void Ciclo_RepitoHastaQue():{}
  
 // DECLARACION DE VARIABLES 
 void Declaracion():{}
-{  
-  Variable_dato() <IDENTIFICADOR> ((<ASIGNACION>  AsignacionD())|{}) (<PuntoComa>|errorFinlinea())
+{
+  Variable_dato(){
+	int td = token.kind;
+  } var = <IDENTIFICADOR>{ 
+	ClaseSemantica.InsertarSimbolo(var,td);
+	System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla.toString());
+  } 
+  ((<ASIGNACION>  AsignacionD())|{}) (<PuntoComa>|errorFinlinea())
 } 
 // ASIGNACION DE VALORES DESPUES DE UNA DECLARACION
 void AsignacionD():{} 
@@ -240,8 +248,12 @@ void AsignacionD():{}
 	( <LEER>  | Expresion() )
 } 
 // ASIGNACION GENERAL DE VALORES A UNA VARIABLE
-void Asignacion():{} 
-{  <IDENTIFICADOR> <ASIGNACION> ( <LEER>|Expresion() ) 
+void Asignacion():{}
+{  
+	var = <IDENTIFICADOR>{ 
+	ClaseSemantica.checkVariable(var);
+  }  <ASIGNACION>
+	( <LEER>|Expresion() ) 
 } 
 
 //###### GRAMATICA PARA EXPRESIONES MATEMATICAS DESPUES DE UNA ASIGNACION O DECLARACION
@@ -332,6 +344,37 @@ void Variable_dato():{}
 |<ID_CADENA>   
 |<BOOLEANO>  
 } 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ---------------------------------------- TRATAMIENTO DE ERRORES --------------------------------------------------------
 JAVACODE

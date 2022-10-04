@@ -6,7 +6,7 @@ public class Compilabob implements CompilabobConstants {
         //variebales para semantica-------------------------------
     String Type="", Valor=""; //variables cache para capturar el par
     String lugar = "";
-    java.util.ArrayList<ParOrd> ParOrdenado = new java.util.ArrayList<ParOrd>(); //Lista de IDs
+        Token var;
     //--------------------------------------------------------
         public static void main(String args[])  {
                 Compilabob compilador = new Compilabob(System.in);
@@ -18,20 +18,20 @@ public class Compilabob implements CompilabobConstants {
                 catch( TokenMgrError e ) {
                         System.out.println( "Error de Token" );
                 }
-                if(compilador.errormsg != "\n" && compilador.sentencias_inco != 0){
+                if(compilador.errormsg == "\n" && compilador.sentencias_inco == 0){
                         System.out.println("An"+"\u00e1"+"lisis l"+"\u00e9"+"xico y sint"+"\u00e1"+"ctico ejecutados con "+"\u00e9"+"xito");
                 }else{
                         System.out.println(compilador.errormsg);
                 }
                 System.out.println("\nFINAL PRINT\n" +"Sentencias incorrectas encontradas: "+compilador.sentencias_inco);
-
+                System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla);
         }
 
 //------------------------------- ANÁLISIS SINTACTICO - AREA DE GRAMATICAS ----------------------------------------------------
 
 // Gramatica inicial que contiene el cuerpo basico del codigo
   final public void Codigo() throws ParseException {
-        TokenAsignaciones.SetTables();
+        ClaseSemantica.SetTables();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case INICIO:
       jj_consume_token(INICIO);
@@ -389,7 +389,10 @@ public class Compilabob implements CompilabobConstants {
 // DECLARACION DE VARIABLES 
   final public void Declaracion() throws ParseException {
     Variable_dato();
-    jj_consume_token(IDENTIFICADOR);
+        int td = token.kind;
+    var = jj_consume_token(IDENTIFICADOR);
+        ClaseSemantica.InsertarSimbolo(var,td);
+        System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla.toString());
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case ASIGNACION:
       jj_consume_token(ASIGNACION);
@@ -433,7 +436,8 @@ public class Compilabob implements CompilabobConstants {
 
 // ASIGNACION GENERAL DE VALORES A UNA VARIABLE
   final public void Asignacion() throws ParseException {
-    jj_consume_token(IDENTIFICADOR);
+    var = jj_consume_token(IDENTIFICADOR);
+        ClaseSemantica.checkVariable(var);
     jj_consume_token(ASIGNACION);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case LEER:
@@ -825,6 +829,60 @@ public class Compilabob implements CompilabobConstants {
     finally { jj_save(5, xla); }
   }
 
+  private boolean jj_3_1() {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_10()) return true;
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_scan_token(MAS)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_9() {
+    if (jj_scan_token(ELSE)) return true;
+    if (jj_scan_token(SepIzq)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13() {
+    if (jj_3R_14()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(37)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(38)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(41)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(34)) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(42)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(34)) return true;
+    }
+    if (jj_scan_token(MAS)) return true;
+    return false;
+  }
+
   private boolean jj_3R_10() {
     Token xsp;
     xsp = jj_scanpos;
@@ -835,13 +893,9 @@ public class Compilabob implements CompilabobConstants {
     return false;
   }
 
-  private boolean jj_3_3() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_8()) return true;
+  private boolean jj_3R_8() {
+    if (jj_3R_12()) return true;
+    if (jj_scan_token(IDENTIFICADOR)) return true;
     return false;
   }
 
@@ -876,58 +930,8 @@ public class Compilabob implements CompilabobConstants {
     return false;
   }
 
-  private boolean jj_3R_9() {
-    if (jj_scan_token(ELSE)) return true;
-    if (jj_scan_token(SepIzq)) return true;
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(42)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(34)) return true;
-    }
-    if (jj_scan_token(MAS)) return true;
-    return false;
-  }
-
-  private boolean jj_3_4() {
-    if (jj_3R_10()) return true;
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_8() {
-    if (jj_3R_12()) return true;
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    return false;
-  }
-
-  private boolean jj_3_5() {
-    if (jj_scan_token(MAS)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_13() {
-    if (jj_3R_14()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_14() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(37)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(38)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(41)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(34)) return true;
-    }
-    }
-    }
+  private boolean jj_3_3() {
+    if (jj_3R_9()) return true;
     return false;
   }
 

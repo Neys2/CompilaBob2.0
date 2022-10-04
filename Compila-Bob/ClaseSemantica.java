@@ -33,10 +33,11 @@ public class ClaseSemantica{
 		decComp.add(33);
 		decComp.add(35);
 
-		chrComp.add(38);
+		chrComp.add(39);
 		
 		strComp.add(36);
 		strComp.add(31);
+		strComp.add(39);
 	}
 
 	public static String checkAsing(Token TokenIzq, Token TokenAsig)
@@ -65,7 +66,7 @@ public class ClaseSemantica{
 			tipoIdent1 = 0;
 			
 		//TokenAsig.kind != 48 && TokenAsig.kind != 50 && TokenAsig.kind != 51 && TokenAsig.kind != 52
-		if(TokenAsig.kind == 38)	
+		if(TokenAsig.kind == 39)	
 		{
 			/*Si el tipo de dato que se esta asignando, es algun identificador(kind == 49) 
 			se obtiene su tipo de la tabla de tokens para poder hacer las comparaciones*/
