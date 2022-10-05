@@ -238,7 +238,7 @@ void Declaracion():{}
 	int td = token.kind;
   } var = <IDENTIFICADOR>{ 
 	ClaseSemantica.InsertarSimbolo(var,td);
-	System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla.toString());
+	//System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla.toString());
   } 
   ((<ASIGNACION>  AsignacionD())|{}) (<PuntoComa>|errorFinlinea())
 } 
@@ -248,13 +248,26 @@ void AsignacionD():{}
 	( <LEER>  | Expresion() )
 } 
 // ASIGNACION GENERAL DE VALORES A UNA VARIABLE
-void Asignacion():{}
+void Asignacion():
+{
+	Token t2;
+}
 {  
 	var = <IDENTIFICADOR>{ 
-	ClaseSemantica.checkVariable(var);
+	errormsg = errormsg+ClaseSemantica.checkVariable(var);
+	if(!ClaseSemantica.checkVariable(var).equals(" ")){
+		sentencias_inco = sentencias_inco+1;
+	}
   }  <ASIGNACION>
-	( <LEER>|Expresion() ) 
+	( <LEER>|Expresion() ) {
+		t2 = token;
+		errormsg = errormsg+ClaseSemantica.checkAsing(var,t2);
+		if(!ClaseSemantica.checkVariable(var).equals(" ")){
+			sentencias_inco = sentencias_inco+1;
+		}
+	}
 } 
+
 
 //###### GRAMATICA PARA EXPRESIONES MATEMATICAS DESPUES DE UNA ASIGNACION O DECLARACION
 void Expresion():{} 
@@ -307,7 +320,7 @@ void FactorL():{}
 void DataType():{} 
 { //Tipos de datos  
 	 
-<NUMERO> |<NUMDECIMAL> | <EST_LOGIC>|<CADENAS> 
+<NUMERO> |<NUMDECIMAL> | <EST_LOGIC> | <CADENAS> 
 } 
 void Comparadores():{}
 {

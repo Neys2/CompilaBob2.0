@@ -392,7 +392,8 @@ public class Compilabob implements CompilabobConstants {
         int td = token.kind;
     var = jj_consume_token(IDENTIFICADOR);
         ClaseSemantica.InsertarSimbolo(var,td);
-        System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla.toString());
+        //System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla.toString());
+
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case ASIGNACION:
       jj_consume_token(ASIGNACION);
@@ -436,8 +437,12 @@ public class Compilabob implements CompilabobConstants {
 
 // ASIGNACION GENERAL DE VALORES A UNA VARIABLE
   final public void Asignacion() throws ParseException {
+        Token t2;
     var = jj_consume_token(IDENTIFICADOR);
-        ClaseSemantica.checkVariable(var);
+        errormsg = errormsg+ClaseSemantica.checkVariable(var);
+        if(!ClaseSemantica.checkVariable(var).equals(" ")){
+                sentencias_inco = sentencias_inco+1;
+        }
     jj_consume_token(ASIGNACION);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case LEER:
@@ -457,6 +462,11 @@ public class Compilabob implements CompilabobConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
+                t2 = token;
+                errormsg = errormsg+ClaseSemantica.checkAsing(var,t2);
+                if(!ClaseSemantica.checkVariable(var).equals(" ")){
+                        sentencias_inco = sentencias_inco+1;
+                }
   }
 
 //###### GRAMATICA PARA EXPRESIONES MATEMATICAS DESPUES DE UNA ASIGNACION O DECLARACION
@@ -834,71 +844,6 @@ public class Compilabob implements CompilabobConstants {
     return false;
   }
 
-  private boolean jj_3_4() {
-    if (jj_3R_10()) return true;
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_5() {
-    if (jj_scan_token(MAS)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_9() {
-    if (jj_scan_token(ELSE)) return true;
-    if (jj_scan_token(SepIzq)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_13() {
-    if (jj_3R_14()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_14() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(37)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(38)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(41)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(34)) return true;
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(42)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(34)) return true;
-    }
-    if (jj_scan_token(MAS)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_10() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_13()) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(42)) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_8() {
-    if (jj_3R_12()) return true;
-    if (jj_scan_token(IDENTIFICADOR)) return true;
-    return false;
-  }
-
   private boolean jj_3R_12() {
     Token xsp;
     xsp = jj_scanpos;
@@ -927,6 +872,71 @@ public class Compilabob implements CompilabobConstants {
 
   private boolean jj_3_6() {
     if (jj_scan_token(ENTERO)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_9() {
+    if (jj_scan_token(ELSE)) return true;
+    if (jj_scan_token(SepIzq)) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_10()) return true;
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(42)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(34)) return true;
+    }
+    if (jj_scan_token(MAS)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_8() {
+    if (jj_3R_12()) return true;
+    if (jj_scan_token(IDENTIFICADOR)) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_scan_token(MAS)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13() {
+    if (jj_3R_14()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(37)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(38)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(41)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(34)) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_10() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_13()) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(42)) return true;
+    }
     return false;
   }
 

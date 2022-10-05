@@ -8,7 +8,6 @@ public class ClaseSemantica{
     private static ArrayList<Integer> intComp = new ArrayList();
 	private static ArrayList<Integer> decComp = new ArrayList();
 	private static ArrayList<Integer> strComp = new ArrayList();
-	private static ArrayList<Integer> chrComp = new ArrayList();
 
     public static void InsertarSimbolo(Token identificador, int tipo)
 	{
@@ -33,7 +32,6 @@ public class ClaseSemantica{
 		decComp.add(33);
 		decComp.add(35);
 
-		chrComp.add(39);
 		
 		strComp.add(36);
 		strComp.add(31);
@@ -59,7 +57,7 @@ public class ClaseSemantica{
 			catch(Exception e)
 			{
 				//Si TokenIzq.image no se encuentra en la tabla en la cual se agregan los tokens, el token no ha sido declarado, y se manda un error
-				return "Error: El identificador " + TokenIzq.image + " No ha sido declarado \r\nLinea: " + TokenIzq.beginLine;
+				return "Error: El identificador " + TokenIzq.image + " No ha sido declarado \r\n" + TokenIzq.beginLine;
 			}
 		}
 		else 		
@@ -77,7 +75,7 @@ public class ClaseSemantica{
 			catch(Exception e)
 			{
 				//si el identificador no existe manda el error
-				return "Error: El identificador " + TokenAsig.image + " No ha sido declarado \r\nLinea: " + TokenIzq.beginLine;
+				return " ";
 			}
 		}
 				//Si el dato es entero(48) o decimal(50) o caracter(51) o cadena(52)
@@ -96,23 +94,22 @@ public class ClaseSemantica{
 			if(intComp.contains(tipoIdent2))
 				return " ";
 			else //Si el tipo de dato no es compatible manda el error
-				return "Error: No se puede convertir " + TokenAsig.image + " a Entero \r\nLinea: " + TokenIzq.beginLine;
+				return "Error: No se puede convertir " + TokenAsig.image + " a Entero \r\n";
 		}
 		else if(tipoIdent1 == 33) //flotante
 		{
 			if(decComp.contains(tipoIdent2))
 				return " ";
 			else
-				return "Error: No se puede convertir " + TokenAsig.image + " a Decimal \r\nLinea: " + TokenIzq.beginLine;
+				return "Error: No se puede convertir " + TokenAsig.image + " a Decimal \r\n";
 		}
 		else if(tipoIdent1 == 31) //string
 		{
 			if(strComp.contains(tipoIdent2))
 				return " ";
 			else
-				return "Error: No se puede convertir " + TokenAsig.image + " a Cadena \r\nLinea: " + TokenIzq.beginLine;
-		}
-		else
+				return "Error: No se puede convertir " + TokenAsig.image + " a Cadena \r\n";
+		}else
 		{
 			return "El Identificador " + TokenIzq.image + " no ha sido declarado" + " Linea: " + TokenIzq.beginLine;
 		}
@@ -126,12 +123,11 @@ public class ClaseSemantica{
 			{
 				//Intenta obtener el token a verificar(checkTok) de la tabla de los tokens
 				int tipoIdent1 = (Integer)tabla.get(checkTok.image);
-				return " ";
+				return "\r\n";
 			}
 			catch(Exception e)
-			{
-				//Si no lo puede obtener, manda el error
-				return "Error: El identificador " + checkTok.image + " No ha sido declarado \r\nLinea: " + checkTok.beginLine;
+			{				//Si no lo puede obtener, manda el error
+				return "Error semántico en la línea:  " +checkTok.beginLine +" columna:  "+checkTok.beginColumn +" "+ checkTok.image + " no ha sido declarado \r\n";
 			}
 		}
 	

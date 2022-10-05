@@ -1,7 +1,7 @@
 compilar_coatl{
-	E_ num0
-E_ num1 : 5;
-E_ num1 : 2;
+E_ num0 : 0;
+E_ num1 : "h";
+E_ num1 : "H";
  num2 : recibir;
 D_ num3 : 3+5;
 E_ val1 : 4%6;
