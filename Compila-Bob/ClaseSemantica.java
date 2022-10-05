@@ -47,7 +47,7 @@ public class ClaseSemantica{
 								asi como, si el token enviado es diferente a algun tipo que no se declara como los numeros(32), los decimales(35),
 								caracteres(38) y cadenas(31)
 								entonces tipoIdent1 = tipo_de_dato, ya que TokenAsig es un dato*/
-		if(TokenIzq.kind != 32 && TokenIzq.kind != 35)		
+		if(TokenIzq.kind != 32 && TokenIzq.kind != 33)		
 		{
 			try 
 			{
@@ -57,7 +57,7 @@ public class ClaseSemantica{
 			catch(Exception e)
 			{
 				//Si TokenIzq.image no se encuentra en la tabla en la cual se agregan los tokens, el token no ha sido declarado, y se manda un error
-				return "Error: El identificador " + TokenIzq.image + " No ha sido declarado \r\n" + TokenIzq.beginLine;
+				return " ";
 			}
 		}
 		else 		
@@ -66,7 +66,7 @@ public class ClaseSemantica{
 		//TokenAsig.kind != 48 && TokenAsig.kind != 50 && TokenAsig.kind != 51 && TokenAsig.kind != 52
 		if(TokenAsig.kind == 39)	
 		{
-			/*Si el tipo de dato que se esta asignando, es algun identificador(kind == 49) 
+			/*Si el tipo de dato que se esta asignando, es algun identificador(kind == 39) 
 			se obtiene su tipo de la tabla de tokens para poder hacer las comparaciones*/
 			try
 			{
@@ -80,7 +80,7 @@ public class ClaseSemantica{
 		}
 				//Si el dato es entero(48) o decimal(50) o caracter(51) o cadena(52)
 				//tipoIdent2 = tipo_del_dato
-		else if(TokenAsig.kind == 48 || TokenAsig.kind == 50 || TokenAsig.kind == 52)
+		else if(TokenAsig.kind == 32 || TokenAsig.kind == 33 || TokenAsig.kind == 36)
 			tipoIdent2 = TokenAsig.kind;
 		else //Si no, se inicializa en algun valor "sin significado(con respecto a los tokens)", para que la variable este inicializada y no marque error al comparar
 			tipoIdent2 = 0; 
@@ -88,30 +88,30 @@ public class ClaseSemantica{
 			
 	  
 		
-		if(tipoIdent1 == 32) //Int
+		if(tipoIdent1 == 34) //Int
 		{
 			//Si la lista de enteros(intComp) contiene el valor de tipoIdent2, entonces es compatible y se puede hacer la asignacion
 			if(intComp.contains(tipoIdent2))
 				return " ";
 			else //Si el tipo de dato no es compatible manda el error
-				return "Error: No se puede convertir " + TokenAsig.image + " a Entero \r\n";
+				return "Error semántico  en la linea "+TokenAsig.beginLine+", columna "+TokenAsig.beginColumn+ " no se puede convertir " + TokenAsig.image + " a Entero\r\n";
 		}
-		else if(tipoIdent1 == 33) //flotante
+		else if(tipoIdent1 == 35 || tipoIdent1 == 36) //flotante
 		{
 			if(decComp.contains(tipoIdent2))
 				return " ";
 			else
-				return "Error: No se puede convertir " + TokenAsig.image + " a Decimal \r\n";
+				return "Error semántico en la linea "+TokenAsig.beginLine+", columna "+TokenAsig.beginColumn+ " no se puede convertir " + TokenAsig.image + " a Decimal \r\n";
 		}
 		else if(tipoIdent1 == 31) //string
 		{
 			if(strComp.contains(tipoIdent2))
 				return " ";
 			else
-				return "Error: No se puede convertir " + TokenAsig.image + " a Cadena \r\n";
+				return "Error semántico en la linea "+TokenAsig.beginLine+", columna "+TokenAsig.beginColumn+ " no se puede convertir " + TokenAsig.image + " a Cadena \r\n";
 		}else
 		{
-			return "El Identificador " + TokenIzq.image + " no ha sido declarado" + " Linea: " + TokenIzq.beginLine;
+			return " ";
 		}
 	}	  
 
@@ -127,7 +127,7 @@ public class ClaseSemantica{
 			}
 			catch(Exception e)
 			{				//Si no lo puede obtener, manda el error
-				return "Error semántico en la línea:  " +checkTok.beginLine +" columna:  "+checkTok.beginColumn +" "+ checkTok.image + " no ha sido declarado \r\n";
+				return "Error semántico en la línea:  " +checkTok.beginLine +" columna:  "+checkTok.beginColumn +", "+ checkTok.image + " no ha sido declarado \r\n";
 			}
 		}
 	

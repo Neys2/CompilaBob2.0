@@ -463,8 +463,8 @@ public class Compilabob implements CompilabobConstants {
       throw new ParseException();
     }
                 t2 = token;
-                errormsg = errormsg+ClaseSemantica.checkAsing(var,t2);
-                if(!ClaseSemantica.checkVariable(var).equals(" ")){
+                if(!ClaseSemantica.checkAsing(var,t2).equals(" ")){
+                        errormsg = errormsg+ClaseSemantica.checkAsing(var,t2);
                         sentencias_inco = sentencias_inco+1;
                 }
   }

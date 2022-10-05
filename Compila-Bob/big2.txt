@@ -1,7 +1,7 @@
 compilar_coatl{
 E_ num0 : 0;
-E_ num1 : "h";
-E_ num1 : "H";
+E_ num1 : 3.5;
+E_ num10 : "H";
  num2 : recibir;
 D_ num3 : 3+5;
 E_ val1 : 4%6;
@@ -27,7 +27,7 @@ cadena : "No soy";
 	repito : {
 		#código a ejecutar a ejecutar en caso de que la condición sea VERDAD
 		#se aumenta el contador n de forma manual.
-		n: n+1;
+		n: n+25;
 		muestra("MI CARA");
 		decide (num != varEnt | num1) : {
 			repito : 
