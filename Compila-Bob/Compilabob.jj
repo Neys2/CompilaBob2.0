@@ -259,12 +259,9 @@ void Asignacion():
 		sentencias_inco = sentencias_inco+1;
 	}
   }  <ASIGNACION>
-	( <LEER>| expresion = Expresion().image ) {
+	( <LEER>| Expresion()) {
 		 
 		t2 = token;
-		if(token != LEER){
-			Expresiones.convierte(expresion);
-		}
 		if(!ClaseSemantica.checkAsing(var,t2).equals(" ")){
 			errormsg = errormsg+ClaseSemantica.checkAsing(var,t2);
 			sentencias_inco = sentencias_inco+1;
