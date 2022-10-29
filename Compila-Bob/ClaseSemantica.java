@@ -9,10 +9,10 @@ public class ClaseSemantica{
 	private static ArrayList<Integer> decComp = new ArrayList();
 	private static ArrayList<Integer> strComp = new ArrayList();
 
-    public static void InsertarSimbolo(Token identificador, int tipo)
+    public static void InsertarSimbolo(Token identificador, int tp)
 	{
 		//En este metodo se agrega a la tabla de tokens el identificador que esta siendo declarado junto con su tipo de dato
-		tabla.put(identificador.image, tipo);
+		tabla.put(identificador.image, tp);
 	 }
 
 
@@ -22,20 +22,18 @@ public class ClaseSemantica{
 		 entero = intComp
 		 decimal = decComp
 		 cadena = strComp
-		 caracter = chrComp
 		*/
-		intComp.add(32);
 		intComp.add(34);
+		intComp.add(38);
 		
-		decComp.add(32);
 		decComp.add(34);
-		decComp.add(33);
 		decComp.add(35);
+		decComp.add(38);
+		decComp.add(39);
 
 		
 		strComp.add(36);
-		strComp.add(31);
-		strComp.add(39);
+		strComp.add(40);
 	}
 
 	public static String checkAsing(Token TokenIzq, Token TokenAsig)
@@ -47,7 +45,7 @@ public class ClaseSemantica{
 								asi como, si el token enviado es diferente a algun tipo que no se declara como los numeros(32), los decimales(35),
 								caracteres(38) y cadenas(31)
 								entonces tipoIdent1 = tipo_de_dato, ya que TokenAsig es un dato*/
-		if(TokenIzq.kind != 32 && TokenIzq.kind != 33)		
+		if(TokenIzq.kind != 38 && TokenIzq.kind != 39 && TokenIzq.kind != 40)		
 		{
 			try 
 			{
@@ -64,7 +62,7 @@ public class ClaseSemantica{
 			tipoIdent1 = 0;
 			
 		//TokenAsig.kind != 48 && TokenAsig.kind != 50 && TokenAsig.kind != 51 && TokenAsig.kind != 52
-		if(TokenAsig.kind == 39)	
+		if(TokenAsig.kind == 42)	
 		{
 			/*Si el tipo de dato que se esta asignando, es algun identificador(kind == 39) 
 			se obtiene su tipo de la tabla de tokens para poder hacer las comparaciones*/
@@ -78,9 +76,9 @@ public class ClaseSemantica{
 				return " ";
 			}
 		}
-				//Si el dato es entero(48) o decimal(50) o caracter(51) o cadena(52)
+				//Si el dato es entero(35) o decimal(36) o cadena(31)
 				//tipoIdent2 = tipo_del_dato
-		else if(TokenAsig.kind == 32 || TokenAsig.kind == 33 || TokenAsig.kind == 36)
+		else if(TokenAsig.kind == 38 || TokenAsig.kind == 39 || TokenAsig.kind == 40)
 			tipoIdent2 = TokenAsig.kind;
 		else //Si no, se inicializa en algun valor "sin significado(con respecto a los tokens)", para que la variable este inicializada y no marque error al comparar
 			tipoIdent2 = 0; 
@@ -94,16 +92,16 @@ public class ClaseSemantica{
 			if(intComp.contains(tipoIdent2))
 				return " ";
 			else //Si el tipo de dato no es compatible manda el error
-				return "Error semántico  en la linea "+TokenAsig.beginLine+", columna "+TokenAsig.beginColumn+ " no se puede convertir " + TokenAsig.image + " a Entero\r\n";
+				return "Error semántico en la linea "+TokenAsig.beginLine+", columna "+TokenAsig.beginColumn+ " no se puede convertir " + TokenAsig.image + " a Entero\r\n";
 		}
-		else if(tipoIdent1 == 35 || tipoIdent1 == 36) //flotante
+		else if(tipoIdent1 == 35 || tipoIdent1 == 34) //decimal
 		{
 			if(decComp.contains(tipoIdent2))
 				return " ";
 			else
 				return "Error semántico en la linea "+TokenAsig.beginLine+", columna "+TokenAsig.beginColumn+ " no se puede convertir " + TokenAsig.image + " a Decimal \r\n";
 		}
-		else if(tipoIdent1 == 31) //string
+		else if(tipoIdent1 == 36) //string
 		{
 			if(strComp.contains(tipoIdent2))
 				return " ";
@@ -123,11 +121,11 @@ public class ClaseSemantica{
 			{
 				//Intenta obtener el token a verificar(checkTok) de la tabla de los tokens
 				int tipoIdent1 = (Integer)tabla.get(checkTok.image);
-				return "\r\n";
+				return "";
 			}
 			catch(Exception e)
 			{				//Si no lo puede obtener, manda el error
-				return "Error semántico en la línea:  " +checkTok.beginLine +" columna:  "+checkTok.beginColumn +", "+ checkTok.image + " no ha sido declarado \r\n";
+				return "Error semántico en la línea " +checkTok.beginLine +", columna  "+checkTok.beginColumn +", "+ checkTok.image + " no ha sido declarado \r\n";
 			}
 		}
 	

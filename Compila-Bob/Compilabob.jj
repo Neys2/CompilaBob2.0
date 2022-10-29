@@ -20,7 +20,8 @@ Resolver el break de estructuras por el método SKIP
 PARSER_BEGIN(Compilabob) 
 import java.io.*;
 public class Compilabob {  
-	String errormsg="\n",expresion="";
+	String errormsg="",datos = "";
+	static  String expresion =" "; 
 	int sentencias_inco =0;  
 	//variebales para semantica-------------------------------
     String Type="", Valor=""; //variables cache para capturar el par
@@ -42,95 +43,96 @@ public class Compilabob {
 		}else{
 			System.out.println(compilador.errormsg);
 		}
-		System.out.println("\nFINAL PRINT\n" +"Sentencias incorrectas encontradas: "+compilador.sentencias_inco);
+		System.out.println("FINAL PRINT\n" +"Sentencias incorrectas encontradas: "+compilador.sentencias_inco);
 		System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla);
+		System.out.println("EXPRESION ----- : "+expresion);
 	}  
 	
 	
 }   
 
 PARSER_END(Compilabob)   
-
+  
 SKIP :   
 {  
-	< " " | "\t" | "\r" | "\n" | "\r\n" >  //White space
-	| <"#" (~["\n","\r"])* ("\n"|"\r"|"\r\n") >  //Single-line comments
-	| <"##"(~["/"])*  "#""#" >  //Multi-line comments
+	< " " | "\t" | "\r" | "\n" | "\r\n" >  //White space 1
+	| <"#" (~["\n","\r"])* ("\n"|"\r"|"\r\n") >  //Single-line comments 2
+	| <"##"(~["/"])*  "#""#" >  //Multi-line comments  3 ---- 
+}
+
+TOKEN:   
+{   
+<INICIO: "compilar_coatl">  //4
+|<FIN: "ejecutar_coatl">  //5
+|<IF: "decide">   //6
+|<ELSE: "sino">   //7
+|<CicloIterado: "repito hasta que">  //8
+|<CicloLimit: "repito"> //9
+|<CicloWhile: "mientras">  //10
+|<ESCRIBIR: "muestra">//11
+|<LEER:"recibir">//12
 }  
 
 TOKEN:   
 {   
-<INICIO: "compilar_coatl">  //1
-|<FIN: "ejecutar_coatl">  //2
-|<IF: "decide">   //3
-|<ELSE: "sino">   //4
-|<CicloIterado: "repito hasta que">  //5
-|<CicloLimit: "repito"> //6
-|<CicloWhile: "mientras">  //7
-|<ESCRIBIR: "muestra">//8
-|<LEER:"recibir">//9
-}  
-
-TOKEN:   
-{   
-<ParenIzq: "(">  //10
-|<ParenDer: ")"> //11
-|<SepIzq: "{">  //12
-|<SepDer: "}">  //13
-|<PuntoComa: ";"> //14
-|<COMA: ",">  //15
+<ParenIzq: "(">  //13
+|<ParenDer: ")"> //14
+|<SepIzq: "{">  //15
+|<SepDer: "}" >  //16
+|<PuntoComa: ";"> //17
+|<COMA: ",">  //18
 }  
 
 TOKEN:  
 {  
-<ASIGNACION: ":"> //16
-|<MENOR: "<">  //17
-|<MAYOR: ">"> //18
-|<MENOR_IGUAL: "<=">//19 
-|<MAYOR_IGUAL: ">="> //20
-|<IGUALDAD: "="> //21
-|<OR: "|">  //22
-|<AND: "&"> //23
-|<NOTEQ: "!="> //24
-|<NOT: "!"> //25
-|<MAS: "+"> //26
-|<MENOS: "-"> //27
-|<DIV: "/"> //28
-|<MODULO: "%"> //29
-|<MULTI: "*"> //30
+<ASIGNACION: ":"> //19
+|<MENOR: "<">  //20
+|<MAYOR: ">"> //21
+|<MENOR_IGUAL: "<=">//22
+|<MAYOR_IGUAL: ">="> //23
+|<IGUALDAD: "="> //24
+|<OR: "|">  //25
+|<AND: "&"> //26
+|<NOTEQ: "!="> //27
+|<NOT: "!"> //28
+|<MAS: "+"> //29
+|<MENOS: "-"> //30
+|<DIV: "/"> //31
+|<MODULO: "%"> //32
+|<MULTI: "*"> //33
 }   
 // [("E_")(["a"-"z"|"A"-"Z"|"_"|"0"-"9"])+]  
 //"E_"(["A"-"Z","a"-"z"](["A"-"Z","a"-"z","0"-"9"])*)  
 // NOT ~ 
 
 //<CADENAS: ("\""(~["\"","#","\n","\r","#","#","\r","\n"])*"\"")>//31
-
-TOKEN: 
-{
-	<CADENAS: ("\""(~["\"","#","\n","\r","#","#","\r","\n"])*"\"")>//31
-}
+//Token t = getToken();
+	//expresion = expresion + t.image;
 
 TOKEN: 
 { 
-<ENTERO: "E_">//32
-|<FLOTANTE: "D_">//33
-|<NUMERO: (["0"-"9"])+>//34
-|<NUMDECIMAL: (["0"-"9"])+ "." (["0"-"9"])+ | (["0"-"9"])+ "." | "." (["0"-"9"])+> //35
+<ENTERO: "E_">//34
+|<FLOTANTE: "D_">//35
 |<ID_CADENA: "C_">//36
 |<BOOLEANO: "L_">//37
-|<EST_LOGIC:("falso"|"verdad")>//38
+|<NUMERO: (["0"-"9"])+>//38
+|<NUMDECIMAL: (["0"-"9"])+ "." (["0"-"9"])+ | (["0"-"9"])+ "." | "." (["0"-"9"])+>//39
+|<CADENAS: ("\""(~["\"","#","\n","\r","#","#","\r","\n"])*"\"")>//40
+|<EST_LOGIC:("falso"|"verdad")>//41
 }   
 
 TOKEN: 
 {
-	<IDENTIFICADOR:["A"-"Z","a"-"z"](["A"-"Z","a"-"z","0"-"9"])*> //39
+	<IDENTIFICADOR:["A"-"Z","a"-"z"](["A"-"Z","a"-"z","0"-"9"])*>//42
 
 }
 
 TOKEN: 
 { 
-	<UNKNOW : ~[]> //40
+	<UNKNOW : ~[]> //43
 }
+
+
 
 //------------------------------- ANÁLISIS SINTACTICO - AREA DE GRAMATICAS ----------------------------------------------------
 
@@ -232,13 +234,20 @@ void Ciclo_RepitoHastaQue():{}
 } 
  
 // DECLARACION DE VARIABLES 
-void Declaracion():{}
+void Declaracion():
+{
+	int td;
+}
 {
   Variable_dato(){
-	int td = token.kind;
-  } var = <IDENTIFICADOR>{ 
-	ClaseSemantica.InsertarSimbolo(var,td);
-	//System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla.toString());
+	td = token.kind;
+  } var = <IDENTIFICADOR>{
+	if(ClaseSemantica.checkVariable(var).equals("")){
+		errormsg = errormsg+"Error semántico en la línea " +var.beginLine +", columna "+var.beginColumn +", la variable "+ var.image + " ya  ha sido declarada \r\n";
+		sentencias_inco++;
+	}else{
+		ClaseSemantica.InsertarSimbolo(var,td);
+	}
   } 
   ((<ASIGNACION>  AsignacionD())|{}) (<PuntoComa>|errorFinlinea())
 } 
@@ -254,18 +263,23 @@ void Asignacion():
 }
 {  
 	var = <IDENTIFICADOR>{ 
-	errormsg = errormsg+ClaseSemantica.checkVariable(var);
-	if(!ClaseSemantica.checkVariable(var).equals(" ")){
-		sentencias_inco = sentencias_inco+1;
+	if(!(ClaseSemantica.checkVariable(var).equals(""))){
+		errormsg = errormsg+ClaseSemantica.checkVariable(var);
+		sentencias_inco++;
 	}
   }  <ASIGNACION>
 	( <LEER>| Expresion()) {
-		 
+
+		/*if(t2.kind != LEER){
+			Expresiones.Convierte(expresion);
+		} */
 		t2 = token;
-		if(!ClaseSemantica.checkAsing(var,t2).equals(" ")){
+		
+		if(!(ClaseSemantica.checkAsing(var,t2).equals(" "))){
 			errormsg = errormsg+ClaseSemantica.checkAsing(var,t2);
-			sentencias_inco = sentencias_inco+1;
+			sentencias_inco++;
 		}
+		expresion = " ";
 	}
 } 
 
@@ -293,9 +307,7 @@ void Factor():{}
 
 void Primario():{}
 {
-	((<ParenIzq>	Expresion() <ParenDer>)  | DataType() | <IDENTIFICADOR> ){
-		expresion = " ";
-	}
+	((<ParenIzq>	Expresion() <ParenDer>)  | DataType() | <IDENTIFICADOR> )
 }
 
 
@@ -317,7 +329,6 @@ void FactorL():{}
 }
 
 // Epsilon ---> | {}
-
 
 // DATOS Y OPERADORES USADOS EN SENTENCIAS
 void DataType():{} 

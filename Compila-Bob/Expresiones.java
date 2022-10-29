@@ -3,13 +3,13 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Expresiones {
-    Nodo inicio,fin;
-    int size;
-    String epos="";
+    private static Nodo inicio,fin;
+    private static int size;
+    private static String epos="";
     private static ArrayList<String> temp= new ArrayList();
     
     
-    public void inserta(String valor){
+    public static void inserta(String valor){
         temp.add(" ");
         if(inicio==null){
             inicio=fin= new Nodo(valor,null);
@@ -19,7 +19,7 @@ public class Expresiones {
         }
     }
     //este método no se usa
-    public void muestra(){
+    public static void muestra(){
         if(inicio!=null){
             String datos ="~~";
             Nodo  auxiliar=inicio;
@@ -33,12 +33,12 @@ public class Expresiones {
         }
     }
     
-    public void elimina(){
+    public static void elimina(){
         inicio=inicio.sig;
     }
     
     
-    public void Convierte(String infija){
+    public static void Convierte(String infija){
         epos="";
         char x;
         int cont=0;
@@ -138,7 +138,7 @@ public class Expresiones {
     } 
     
     
-    class Nodo{
+    public static class Nodo{
         String valor;
         Nodo sig;
         Nodo(int n){

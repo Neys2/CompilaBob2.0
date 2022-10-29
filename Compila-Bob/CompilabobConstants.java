@@ -69,19 +69,19 @@ public interface CompilabobConstants {
   /** RegularExpression Id. */
   int MULTI = 33;
   /** RegularExpression Id. */
-  int CADENAS = 34;
+  int ENTERO = 34;
   /** RegularExpression Id. */
-  int ENTERO = 35;
+  int FLOTANTE = 35;
   /** RegularExpression Id. */
-  int FLOTANTE = 36;
+  int ID_CADENA = 36;
   /** RegularExpression Id. */
-  int NUMERO = 37;
+  int BOOLEANO = 37;
   /** RegularExpression Id. */
-  int NUMDECIMAL = 38;
+  int NUMERO = 38;
   /** RegularExpression Id. */
-  int ID_CADENA = 39;
+  int NUMDECIMAL = 39;
   /** RegularExpression Id. */
-  int BOOLEANO = 40;
+  int CADENAS = 40;
   /** RegularExpression Id. */
   int EST_LOGIC = 41;
   /** RegularExpression Id. */
@@ -128,13 +128,13 @@ public interface CompilabobConstants {
     "\"/\"",
     "\"%\"",
     "\"*\"",
-    "<CADENAS>",
     "\"E_\"",
     "\"D_\"",
-    "<NUMERO>",
-    "<NUMDECIMAL>",
     "\"C_\"",
     "\"L_\"",
+    "<NUMERO>",
+    "<NUMDECIMAL>",
+    "<CADENAS>",
     "<EST_LOGIC>",
     "<IDENTIFICADOR>",
     "<UNKNOW>",
