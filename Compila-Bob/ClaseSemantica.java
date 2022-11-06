@@ -73,7 +73,7 @@ public class ClaseSemantica{
 			catch(Exception e)
 			{
 				//si el identificador no existe manda el error
-				return " ";
+				return "Error semántico en la línea " +TokenAsig.beginLine +", columna  "+TokenAsig.beginColumn +", "+ TokenAsig.image + " no ha sido declarado \r\n";
 			}
 		}
 				//Si el dato es entero(35) o decimal(36) o cadena(31)

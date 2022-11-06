@@ -1,13 +1,12 @@
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Expresiones {
     private static Nodo inicio,fin;
     private static int size;
     private static String epos="";
     private static ArrayList<String> temp= new ArrayList();
-    
+    public static  ArrayList <String> tokensValue = new ArrayList<String>();
     
     public static void inserta(String valor){
         temp.add(" ");
@@ -38,21 +37,18 @@ public class Expresiones {
     }
     
     
-    public static void Convierte(String infija){
+    public static void Convierte(){
         epos="";
         char x;
         int cont=0;
         String c;
-        StringBuilder inFija = new StringBuilder(infija);//Objeto para hacer el decremento 
         inicio=null;                                //de los caracteres en la expresión
-        while(cont<infija.length()){
-            c = Character.toString(infija.charAt(cont));//Casteo de CHAR a STRING ya que 
-            inFija.deleteCharAt(0);                  //el dato que nos devuelve la lectura es CHAR
-            cont++; //En la linea anterior se elimina ese caracter de la cadena
-            if(c.equals("(")){
-                inserta(c);
+        while(cont<tokensValue.size()){                 //el dato que nos devuelve la lectura es CHAR
+             //En la linea anterior se elimina ese caracter de la cadena
+            if(tokensValue.get(cont).equals("(")){
+                inserta(tokensValue.get(cont));
             }else{
-                if(c.equals(")")){
+                if(tokensValue.get(cont).equals(")")){
                     //Si es un parentesis derecho se agregan a EPOS 
                     //todos los operadores que tengamos en pila -->
                     while(!"(".equals(inicio.valor)){
@@ -61,25 +57,26 @@ public class Expresiones {
                     }
                     elimina();
                 }else{
-                    if(Character.isDigit(c.charAt(0))){
-                        epos=epos+c;
+                    if(Character.isDigit(tokensValue.get(cont).charAt(0))){
+                        epos=epos+tokensValue.get(cont);
                     }else{
                         if(inicio!=null){
                             x =inicio.valor.charAt(0);
                             //En la siguiente linea se compara el digito 
                             //actual con la jerarquía de operadores mediante el código ASCII
-                            while((inicio!=null && (infija.charAt(cont)<=x))){
+                            while((inicio!=null && (tokensValue.get(cont).charAt(cont)<=x))){
                                 epos=epos+inicio.valor;
                                 elimina();
                             }
-                            inserta(c);
+                            inserta(tokensValue.get(cont));
                         }else{//else para agregar a la pila operadores que se encuentran después de un
                             //parentesis derecho, al estar vacía la pila no entra en el if de la linea 50.
-                            inserta(c);
+                            inserta(tokensValue.get(cont));
                         }
                     }
                 }
             }
+            cont++;
             
         }//While para agregar a EPOS todos los operadores finales que deban ir a la derecha
         while(inicio!=null){
