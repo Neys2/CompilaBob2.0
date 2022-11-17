@@ -4,9 +4,9 @@ options {
 	STATIC = false; 
 } 
 /*
-javacc Compilabob.jj
+javacc CodigoIntermedio.jj
 javac *.java
-java Compilabob < Ejemplo7.txt
+java CodigoIntermedio < Ejemplo7.txt
 
 ----------------------------------------------------------------  NOTA --------------------------------------------------------------------------
 ---------------------------------------------------------- MÉTODOS POR AGREGAR --------------------------------------------------------------------
@@ -20,35 +20,69 @@ Resolver el break de estructuras por el método SKIP
 PARSER_BEGIN(Compilabob) 
 import java.io.*;
 import java.util.ArrayList;
+import java.io.PrintWriter;
+
 
 public class Compilabob {  
-	String errormsg="",datos = "";
+	
+	String errormsg="";
 	int sentencias_inco =0;  
 	//variebales para semantica-------------------------------
-    String Type="", Valor=""; //variables cache para capturar el par
+    String Type="", valor=""; //variables cache para capturar el paimp
     String lugar = "";
-	Token var;
+	Token var,forVar;
+	boolean lectura = false;
+	public static FileWriter  fichero = null;
+    public static PrintWriter pw = null;
+	public static String call = "cmd /k start C:/Users/selen/Escritorio/CompilaBob2.0/Compila-Bob/consola.bat";
     //--------------------------------------------------------
 	public static void main(String args[])  { 
-		Compilabob compilador = new Compilabob(System.in); 
+      
+		/* CODIGO INTERMEDIO 
+		String fileName = "intermedio.txt";
+    	String encoding = "UTF-8";
+		CodigoIntermedio.writer = new PrintWriter(fileName, encoding);
+		*/
+		Compilabob compilador = new Compilabob(System.in);
 		try { 
+			fichero = new FileWriter ("cCode.cpp");
+			pw = new PrintWriter(fichero);
+			pw.println("#include <iostream>");
+			pw.println("#include <stdlib.h>");
+			pw.println("using namespace std;");
 			compilador.Codigo();
-		}catch( Exception e ){   
+		}
+		catch( Exception e ){   
 			System.out.println("\nEXCEPTION e MAIN\n" +"Sentencias incorrectas encontradas: "+compilador.sentencias_inco);
+			e.printStackTrace();
 		}
 		catch( TokenMgrError e ) { 
 			System.out.println( "Error de Token" );
+		}
+		finally
+		{
+			try {
+				// Aprovechamos el finally para 
+				// asegurarnos que se cierra el fichero.
+					if (null != fichero)
+				   		fichero.close();
+			} catch (Exception e2) {
+				   e2.printStackTrace();
+				}
 		} 
 		if(compilador.errormsg == "" && compilador.sentencias_inco == 0){
 			System.out.println("Compilador ejecutado con "+"\u00e9"+"xito");
+			try {
+				Runtime.getRuntime().exec(call);
+			} catch (java.io.IOException e) {
+				e.getMessage();
+			}
+
 		}else{
 			System.out.println(compilador.errormsg);
 		}
 		System.out.println("Sentencias incorrectas encontradas: "+compilador.sentencias_inco);
-		System.out.println("----- Tabla hash ----"+ ClaseSemantica.tabla);
-		for(int i = 0; i < Expresiones.tokensValue.size(); i++) {
-            System.out.println(Expresiones.tokensValue.get(i).toString());
-        }
+		
 	}  
 	
 	
@@ -145,9 +179,9 @@ TOKEN:
 	ClaseSemantica.SetTables();	
 } 
 {
-	((<INICIO> |ErrorNoinicio())(<SepIzq> |ErrorNoSepINICIO())) 
-	Cuerpo() 
-	((<SepDer>|ErrorNoSepFINAL())(<FIN>|ErrorNOFIN()))<EOF> 
+	((<INICIO>{Compilabob.pw.println("int main()");} |ErrorNoinicio())(<SepIzq>{Compilabob.pw.println("{ ");}|ErrorNoSepINICIO())) 
+	Cuerpo() /*{Compilabob.pw.println("system(\"PAUSE\");");}*/
+	((<SepDer>{Compilabob.pw.println("}");}|ErrorNoSepFINAL())(<FIN>|ErrorNOFIN()))<EOF> 
 } 
 
 // método cuerpo, lee un conjunto de sentencias tamaño n
@@ -163,7 +197,7 @@ try {
 (LOOKAHEAD(2) 
  // PuntoComa toen separado debido a la variabilidad del codigo
 Declaracion()   // Declaracion de Variables k
-|( Asignacion()( <PuntoComa>|errorFinlinea())) //Asignacion de valores 
+|( Asignacion()( <PuntoComa>{Compilabob.pw.println(";\n");}|errorFinlinea())) //Asignacion de valores 
 | Ciclo_RepitoHastaQue() 
 | Ciclo_RepitoMientras()
 | Decide()
@@ -174,16 +208,17 @@ Declaracion()   // Declaracion de Variables k
 }
 catch (ParseException e) {
 	System.out.println(e.toString());  //imprime el mensaje de error
-	System.out.println("ESTE ES EL TOKEN ALV "+token.kind);
+	//System.out.println("ESTE ES EL TOKEN ALV "+token.kind);
     error_skipto(PuntoComa, FIN, EOF);
   } 
 
 }
 
+
 void Muestra():{}
 {
 
-	<ESCRIBIR> <ParenIzq>  Mensaje()   <ParenDer> (<PuntoComa>|errorFinlinea())
+	<ESCRIBIR>{Compilabob.pw.print("cout ");} <ParenIzq>{Compilabob.pw.print("<< ");} Mensaje()   <ParenDer>{Compilabob.pw.print("<< endl ");} (<PuntoComa>{Compilabob.pw.print(";\n");}|errorFinlinea())
 }
 
 void Mensaje():{}{
@@ -194,7 +229,7 @@ void Mensaje():{}{
 void Concatenacion():{}{
 
   ( LOOKAHEAD(2)
-  	(<IDENTIFICADOR>|<CADENAS>) <MAS> Concatenacion() | (<IDENTIFICADOR>|<CADENAS>)) 
+  	(<IDENTIFICADOR>{Compilabob.pw.print(token.image+" ");}|<CADENAS>{Compilabob.pw.print(token.image+" ");}) <MAS>{Compilabob.pw.print("<< ");} Concatenacion() | (<IDENTIFICADOR>{Compilabob.pw.print(token.image+" ");}|<CADENAS>{Compilabob.pw.print(token.image+" ");})) 
 }
 
 //########  DECIDE IF-ELSE ##########
@@ -207,94 +242,122 @@ IF() (
 }
 void IF():{ }
 {
-	<IF> <ParenIzq> OpComparacion() <ParenDer>  <ASIGNACION>  <SepIzq>
+	<IF>{Compilabob.pw.print("if ");} <ParenIzq>{Compilabob.pw.print("( ");} OpComparacion() <ParenDer>{Compilabob.pw.print(") ");} <ASIGNACION> <SepIzq>{Compilabob.pw.println("{ ");}
 	(	 
 	sentencias() )*
-	<SepDer>
+	<SepDer>{Compilabob.pw.println("} ");}
 }
 
 void ELSE():{}
 {
-	<ELSE> <SepIzq> 
+	<ELSE>{Compilabob.pw.print("else ");} <SepIzq> {Compilabob.pw.println("{ ");}
 	(	 
-	sentencias() )*<SepDer> (<PuntoComa>|errorFinlinea())
+	sentencias() )*<SepDer> {Compilabob.pw.println("} ");}(<PuntoComa>|errorFinlinea())
 }
 
 
 // ############## CICLOS #############
 
-void Ciclo_RepitoHastaQue():{}
+void Ciclo_RepitoHastaQue():{
+	Token var2;
+}
 {
-	<CicloIterado> <ParenIzq> <IDENTIFICADOR> <COMA> (<IDENTIFICADOR>|DataType()) <ParenDer> (<ASIGNACION>|ErrorNoAsignacion())
-	<SepIzq> (sentencias())* <SepDer> (<PuntoComa>|errorFinlinea())
+	<CicloIterado>{Compilabob.pw.print("for ");} <ParenIzq>{Compilabob.pw.print("( ");} var2 =  <IDENTIFICADOR>{
+		Compilabob.pw.print(token.image+" ");
+		if(!ClaseSemantica.checkVariable(var2).equals("")){
+			errormsg = errormsg+ClaseSemantica.checkVariable(var2);
+			sentencias_inco++;
+		}} <COMA>{Compilabob.pw.print("; "+var2.image+" <= ");}
+		(var = <IDENTIFICADOR>{
+			Compilabob.pw.print(token.image+" ");
+			if(!ClaseSemantica.checkVariable(var).equals("")){
+				errormsg = errormsg+ClaseSemantica.checkVariable(var);
+				sentencias_inco++;
+			}}
+			|DataType()) {
+			}
+			<ParenDer>{Compilabob.pw.print(";"+var2.image+"++) ");} <ASIGNACION> 
+	<SepIzq>{Compilabob.pw.print("{\n");} (sentencias())* <SepDer>{Compilabob.pw.println("} ");} (<PuntoComa>|errorFinlinea())
 
 }
 
  void Ciclo_RepitoMientras():{}
 {
-	<CicloLimit> (<ASIGNACION>|ErrorNoAsignacion()) <SepIzq> 
+	<CicloLimit>{Compilabob.pw.print("do ");} <ASIGNACION> <SepIzq>{Compilabob.pw.print("{ ");} 
 	(sentencias())* 
-	<SepDer> <CicloWhile> <ParenIzq> OpComparacion() <ParenDer> (<PuntoComa>|errorFinlinea())
+	<SepDer>{Compilabob.pw.print("} ");} <CicloWhile>{Compilabob.pw.print("while ");} <ParenIzq>{Compilabob.pw.print("( ");} OpComparacion() <ParenDer>{Compilabob.pw.print(") ");} (<PuntoComa>{Compilabob.pw.print(";\n");}|errorFinlinea())
 } 
  
 // DECLARACION DE VARIABLES 
 void Declaracion():
 {
 	int td;
+	Token varIden;
 }
 {
   Variable_dato(){
 	td = token.kind;
-  } var = <IDENTIFICADOR>{
-	if(ClaseSemantica.checkVariable(var).equals("")){
-		errormsg = errormsg+"Error semántico en la línea " +var.beginLine +", columna "+var.beginColumn +", la variable "+ var.image + " ya  ha sido declarada \r\n";
+  } varIden = <IDENTIFICADOR>{
+	Compilabob.pw.print(token.image+" ");
+	if(ClaseSemantica.checkVariable(varIden).equals("")){
+		errormsg = errormsg+"Error semántico en la línea " +varIden.beginLine +", columna "+varIden.beginColumn +", la variable "+ varIden.image + " ya  ha sido declarada \r\n";
 		sentencias_inco++;
-		Expresiones.tokensValue.remove((Expresiones.tokensValue.size()-1));
+		//CodigoIntermedio.tokensValue.remove((CodigoIntermedio.tokensValue.size()-1));
 	}else{
-		ClaseSemantica.InsertarSimbolo(var,td);
-		System.out.println("Esta es la image "+token.image);
-		Expresiones.tokensValue.add(token.image);
+		ClaseSemantica.InsertarSimbolo(varIden,td);
+		//CodigoIntermedio.tokensValue.add(token.image);
 	}
   } 
-  ((<ASIGNACION>{Expresiones.tokensValue.add(token.image);}  AsignacionD())|{}) (<PuntoComa>{Expresiones.tokensValue.add(token.image);}|errorFinlinea())
+  ((<ASIGNACION>{Compilabob.pw.print("= ");}/*{CodigoIntermedio.tokensValue.add(token.image);} */  Expresion())|{}) (<PuntoComa>{Compilabob.pw.print(";\n");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/|errorFinlinea())
 } 
 // ASIGNACION DE VALORES DESPUES DE UNA DECLARACION
-void AsignacionD():{} 
+/*void AsignacionD():{} 
 {  
-	( <LEER> {Expresiones.tokensValue.add(token.image);} | Expresion() )
-} 
+	( <LEER>{Compilabob.pw.print("cin >> "+var.image);} | Expresion() )
+} */
 // ASIGNACION GENERAL DE VALORES A UNA VARIABLE
 void Asignacion():
 {
 	Token t2;
+	Token varIden;
 }
 {  
-	var = <IDENTIFICADOR>{ 
-	if(!(ClaseSemantica.checkVariable(var).equals(""))){
-		errormsg = errormsg+ClaseSemantica.checkVariable(var);
+	varIden = <IDENTIFICADOR>{ 
+	//Compilabob.pw.print(token.image+" ");
+	if(!(ClaseSemantica.checkVariable(varIden).equals(""))){
+		errormsg = errormsg+ClaseSemantica.checkVariable(varIden);
 		sentencias_inco++;
-		Expresiones.tokensValue.remove((Expresiones.tokensValue.size()-1));
+		/*/CodigoIntermedio.tokensValue.remove((CodigoIntermedio.tokensValue.size()-1));*/
 	}else{
-		Expresiones.tokensValue.add(token.image);
+		/*CodigoIntermedio.tokensValue.add(token.image);*/
 	}
-  }  <ASIGNACION>{Expresiones.tokensValue.add(token.image);}
-	( <LEER>| Expresion()) {
+  }  <ASIGNACION>/*{Compilabob.pw.print("= ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/
+	( <LEER> {
+			lectura = true;
+			if(lectura==true)
+			Compilabob.pw.print("cin >> "+varIden.image);
+			lectura = false;
+		}|{
+			if(lectura==false)
+			Compilabob.pw.print(varIden.image+" = ");
+		} Expresion()) {
 		t2 = token;
 		
-		if(!(ClaseSemantica.checkAsing(var,t2).equals(" "))){
-			errormsg = errormsg+ClaseSemantica.checkAsing(var,t2);
+		if(!(ClaseSemantica.checkAsing(varIden,t2).equals(" "))){
+			errormsg = errormsg+ClaseSemantica.checkAsing(varIden,t2);
 			sentencias_inco++;
-			Expresiones.tokensValue.remove((Expresiones.tokensValue.size()-1));
+			/*CodigoIntermedio.tokensValue.remove((CodigoIntermedio.tokensValue.size()-1));*/
 		}
 	}
 } 
+
 
 
 //###### GRAMATICA PARA EXPRESIONES MATEMATICAS DESPUES DE UNA ASIGNACION O DECLARACION
 void Expresion():{} 
 {   
  
-	Termino() ((<MAS>|<MENOS>){Expresiones.tokensValue.add(token.image);} Termino())*
+	Termino() ((<MAS>|<MENOS>){Compilabob.pw.print(token.image+" ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/ Termino())*
 
 	  
 } 
@@ -303,23 +366,32 @@ void Expresion():{}
 
 void Termino():{}
 {  
-	Factor() ((<MULTI>|<DIV>|<MODULO>){Expresiones.tokensValue.add(token.image);} Factor())*
+	Factor() ((<MULTI>|<DIV>|<MODULO>){Compilabob.pw.print(token.image+" ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/ Factor())*
 }
 void Factor():{}
 {
-	(<MENOS>{Expresiones.tokensValue.add(token.image);} Factor()) | Primario()
+	(<MENOS>{Compilabob.pw.print("-");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/ Factor()) | Primario()
  
 }
 
 void Primario():{}
-{
-	((<ParenIzq>{Expresiones.tokensValue.add(token.image);}	Expresion() <ParenDer>{Expresiones.tokensValue.add(token.image);})  | DataType() | <IDENTIFICADOR> {Expresiones.tokensValue.add(token.image);})
+{ 
+	((<ParenIzq>{Compilabob.pw.print("( ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/	Expresion() <ParenDer>{Compilabob.pw.print(") ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/)  | DataType() | <IDENTIFICADOR> {Compilabob.pw.print(" "+token.image);} /*{CodigoIntermedio.tokensValue.add(token.image);}*/)
 }
 
 
 // ############## OPERACIONES DE COMPARACION PARA IF O CICLOS  ####################
-void OpComparacion():{}{
-		ExpresionL() Comparadores() ExpresionL()
+void OpComparacion():{
+	Token var3;
+}{
+		ExpresionL(){var3 = var;} Comparadores() ExpresionL(){
+			System.out.println("Esta es var3: "+var3);
+			System.out.println("Esta es var: "+var);
+			if(!(ClaseSemantica.checkAsing(var3,var).equals(" "))){
+				errormsg = errormsg+ClaseSemantica.checkAsing(var3,var);
+				sentencias_inco++;
+			}
+		}
 }
 
 void ExpresionL():{} 
@@ -329,9 +401,11 @@ void ExpresionL():{}
 	|  FactorL()
 } 
 
-void FactorL():{}
+void FactorL():{
+	Token t2;
+}
 {
-	(  DataType() | (<IDENTIFICADOR>{Expresiones.tokensValue.add(token.image);} | errorNoIden()) )
+	(  DataType() | (var = <IDENTIFICADOR>{Compilabob.pw.print(token.image+" ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/ | errorNoIden()) )
 }
 
 // Epsilon ---> | {}
@@ -340,42 +414,43 @@ void FactorL():{}
 void DataType():{} 
 { //Tipos de datos  
 	 
-(<NUMERO> |<NUMDECIMAL> | <EST_LOGIC> | <CADENAS>){Expresiones.tokensValue.add(token.image);}
+(var=<NUMERO>|var=<NUMDECIMAL> | var=<EST_LOGIC> | <CADENAS>){Compilabob.pw.print(token.image+" ");} /*{CodigoIntermedio.tokensValue.add(token.image);}*/
 } 
 void Comparadores():{}
 {
- (<MENOR>   
-|<MAYOR> 
-|<MENOR_IGUAL>  
-|<MAYOR_IGUAL>  
-|<IGUALDAD> 
-|<NOTEQ>){Expresiones.tokensValue.add(token.image);}
+ (<MENOR>{Compilabob.pw.print("< ");}  
+|<MAYOR> {Compilabob.pw.print("> ");} 
+|<MENOR_IGUAL>{Compilabob.pw.print("<= ");} 
+|<MAYOR_IGUAL> {Compilabob.pw.print(">= ");} 
+|<IGUALDAD> {Compilabob.pw.print("== ");} 
+|<NOTEQ>{Compilabob.pw.print("!= ");} )/*{CodigoIntermedio.tokensValue.add(token.image);}*/
 }
 
 void Logicos():{}
 {
-  (<OR>  
- |<AND>){Expresiones.tokensValue.add(token.image);}
+  (<OR>{Compilabob.pw.print("|| ");}   
+ |<AND>{Compilabob.pw.print("&& ");} )//{CodigoIntermedio.tokensValue.add(token.image);}
 }
 
 
 void Operadores():{} 
 { //Operadores para expresiones matematicas
 	LOOKAHEAD(3)
- <MAS> 
+ (
+<MAS> 
 |<MENOS>  
 |<DIV> 
 |<MODULO>   
-|<MULTI>   
+|<MULTI> ){Compilabob.pw.print(token.image+" ");} 
 } 
 
 void Variable_dato():{} 
 { //Tipo del dato de la variable del dato a la hora de su declaracion
 	LOOKAHEAD(3)
-<ENTERO>   
-|<FLOTANTE>   
-|<ID_CADENA>   
-|<BOOLEANO>  
+<ENTERO> {Compilabob.pw.print("int ");}   
+|<FLOTANTE>   {Compilabob.pw.print("float ");} 
+|<ID_CADENA>  {Compilabob.pw.print("string ");}  
+|<BOOLEANO>  {Compilabob.pw.print("bool ");} 
 } 
 
 
@@ -418,7 +493,7 @@ void error_skipto(int puntocoma, int fincode, int finfile) {
   // have been "if"/"while".
   //, int sepiz   &&(t.kind !=sepiz)
   do {
-	System.out.println("ESTE ES EL TOKEN ALV "+token.kind);
+	//System.out.println("ESTE ES EL TOKEN ALV "+token.kind);
     t = getNextToken();
   }
   while ((t.kind !=puntocoma)&&(t.kind !=fincode)&&(t.kind !=finfile));

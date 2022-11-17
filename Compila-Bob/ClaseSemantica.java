@@ -1,4 +1,3 @@
-import java.io.PrintStream;
 import java.util.Hashtable;
 import java.lang.String;
 import java.util.ArrayList;
@@ -25,15 +24,18 @@ public class ClaseSemantica{
 		*/
 		intComp.add(34);
 		intComp.add(38);
+		intComp.add(12);
 		
 		decComp.add(34);
 		decComp.add(35);
 		decComp.add(38);
 		decComp.add(39);
+		decComp.add(12);
 
 		
 		strComp.add(36);
 		strComp.add(40);
+		strComp.add(12);
 	}
 
 	public static String checkAsing(Token TokenIzq, Token TokenAsig)
@@ -78,7 +80,7 @@ public class ClaseSemantica{
 		}
 				//Si el dato es entero(35) o decimal(36) o cadena(31)
 				//tipoIdent2 = tipo_del_dato
-		else if(TokenAsig.kind == 38 || TokenAsig.kind == 39 || TokenAsig.kind == 40)
+		else if(TokenAsig.kind == 38 || TokenAsig.kind == 39 || TokenAsig.kind == 40 || TokenAsig.kind == 12)
 			tipoIdent2 = TokenAsig.kind;
 		else //Si no, se inicializa en algun valor "sin significado(con respecto a los tokens)", para que la variable este inicializada y no marque error al comparar
 			tipoIdent2 = 0; 

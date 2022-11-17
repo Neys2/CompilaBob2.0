@@ -2,7 +2,7 @@ compilar_coatl{
 	E_ valor1:5;
 	repito hasta que(n,var1):{
 		 num : 3-(45+1)*5;
-		muestra("THIS IS MY NIGGA "); 
+		muestra("Hola mundo"); 
 	}	
 
 	E_ valor2 : recibir;

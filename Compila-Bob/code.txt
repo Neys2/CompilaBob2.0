@@ -1,10 +1,29 @@
 compilar_coatl{
  
-	E_ n : 5+30-18;
-	C_ cadena : "onon$";
-	n:6;
+	E_ n : 5+30-20;
+	muestra("Dame tu nombre: ");
+	C_ cadena;
+	cadena : recibir;
+	#n:6;
 	D_ dcimal: 5.4;
+	muestra("Dame tu edad: ");
+	n : recibir;
+	decide (n="yoyo") : {
+			muestra("Este es un if, n es igual a 3 ");
+		}sino{
+			muestra("Este es un else, n es igual a "+n);
+		};
 	E_ x : 3;
+	#n:2;
+	muestra ("Hola! "+cadena+" voy a entrar al ciclo OwO");
+	x : (10+5)/3;
+	muestra (x);
+	repito : {
+		n : n-1;
+		muestra("Este es n: "+n);
+	}mientras(n!=0);
+	x:5*2;
+	muestra("Este es x otra vez:"+x);
 
 }ejecutar_coatl
 
