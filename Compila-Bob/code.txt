@@ -8,7 +8,7 @@ compilar_coatl{
 	D_ dcimal: 5.4;
 	muestra("Dame tu edad: ");
 	n : recibir;
-	decide (n="yoyo") : {
+	decide (n=3) : {
 			muestra("Este es un if, n es igual a 3 ");
 		}sino{
 			muestra("Este es un else, n es igual a "+n);

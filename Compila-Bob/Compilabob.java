@@ -9,9 +9,7 @@ public class Compilabob implements CompilabobConstants {
         String errormsg="";
         int sentencias_inco =0;
         //variebales para semantica-------------------------------
-    String Type="", valor=""; //variables cache para capturar el paimp
-    String lugar = "";
-        Token var,forVar;
+        Token var,opVar;
         boolean lectura = false;
         public static FileWriter  fichero = null;
     public static PrintWriter pw = null;
@@ -384,7 +382,11 @@ public class Compilabob implements CompilabobConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-
+                                        var = token;
+                                        if(!(ClaseSemantica.checkAsing(var2,var).equals(" "))){
+                                                errormsg = errormsg+ClaseSemantica.checkAsing(var2,var);
+                                                sentencias_inco++;
+                                        }
     jj_consume_token(ParenDer);
                                    Compilabob.pw.print(";"+var2.image+"++) ");
     jj_consume_token(ASIGNACION);
@@ -475,7 +477,7 @@ public class Compilabob implements CompilabobConstants {
 // DECLARACION DE VARIABLES 
   final public void Declaracion() throws ParseException {
         int td;
-        Token varIden;
+        Token varIden,t2;
     Variable_dato();
         td = token.kind;
     varIden = jj_consume_token(IDENTIFICADOR);
@@ -483,16 +485,19 @@ public class Compilabob implements CompilabobConstants {
         if(ClaseSemantica.checkVariable(varIden).equals("")){
                 errormsg = errormsg+"Error sem\u00e1ntico en la l\u00ednea " +varIden.beginLine +", columna "+varIden.beginColumn +", la variable "+ varIden.image + " ya  ha sido declarada \r\n";
                 sentencias_inco++;
-                //CodigoIntermedio.tokensValue.remove((CodigoIntermedio.tokensValue.size()-1));
         }else{
                 ClaseSemantica.InsertarSimbolo(varIden,td);
-                //CodigoIntermedio.tokensValue.add(token.image);
         }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case ASIGNACION:
       jj_consume_token(ASIGNACION);
                  Compilabob.pw.print("= ");
       Expresion();
+        t2 = token;
+        if(!(ClaseSemantica.checkAsing(varIden,t2).equals(" "))){
+                errormsg = errormsg+ClaseSemantica.checkAsing(varIden,token);
+                sentencias_inco++;
+        }
       break;
     default:
       jj_la1[20] = jj_gen;
@@ -501,7 +506,7 @@ public class Compilabob implements CompilabobConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case PuntoComa:
       jj_consume_token(PuntoComa);
-                                                                                                                                 Compilabob.pw.print(";\n");
+                    Compilabob.pw.print(";\n");
       break;
     default:
       jj_la1[21] = jj_gen;
@@ -524,8 +529,6 @@ public class Compilabob implements CompilabobConstants {
                 errormsg = errormsg+ClaseSemantica.checkVariable(varIden);
                 sentencias_inco++;
                 /*/CodigoIntermedio.tokensValue.remove((CodigoIntermedio.tokensValue.size()-1));*/
-        }else{
-                /*CodigoIntermedio.tokensValue.add(token.image);*/
         }
     jj_consume_token(ASIGNACION);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -559,22 +562,11 @@ public class Compilabob implements CompilabobConstants {
                         sentencias_inco++;
                         /*CodigoIntermedio.tokensValue.remove((CodigoIntermedio.tokensValue.size()-1));*/
                 }
+                if(!ClaseSemantica.checkString(varIden,opVar,t2).equals("")){
+                        errormsg = errormsg+ClaseSemantica.checkString(varIden,opVar,t2);
+                        sentencias_inco++;
+                }
   }
-
-/* 
-void Leer(){}
-{
-	<LEER><COMA>var = <IDENTIFICADOR>{
-		t2 = token;
-		
-		if(!(ClaseSemantica.checkAsing(var,t2).equals(" "))){
-			errormsg = errormsg+ClaseSemantica.checkAsing(var,t2);
-			sentencias_inco++;
-		}
-	}
-}
-*/
-
 
 //###### GRAMATICA PARA EXPRESIONES MATEMATICAS DESPUES DE UNA ASIGNACION O DECLARACION
   final public void Expresion() throws ParseException {
@@ -671,7 +663,7 @@ void Leer(){}
                      Compilabob.pw.print("( ");
       Expresion();
       jj_consume_token(ParenDer);
-                                                                                                                               Compilabob.pw.print(") ");
+                                                                               Compilabob.pw.print(") ");
       break;
     case NUMERO:
     case NUMDECIMAL:
@@ -681,7 +673,7 @@ void Leer(){}
       break;
     case IDENTIFICADOR:
       jj_consume_token(IDENTIFICADOR);
-                                                                                                                                                                                                                                                 Compilabob.pw.print(" "+token.image);
+                                                                                                                                             Compilabob.pw.print(" "+token.image);
       break;
     default:
       jj_la1[28] = jj_gen;
@@ -694,11 +686,10 @@ void Leer(){}
   final public void OpComparacion() throws ParseException {
         Token var3;
     ExpresionL();
-                             var3 = var;
+                             var3 = token;
     Comparadores();
     ExpresionL();
-                        System.out.println("Esta es var3: "+var3);
-                        System.out.println("Esta es var: "+var);
+                        var = token;
                         if(!(ClaseSemantica.checkAsing(var3,var).equals(" "))){
                                 errormsg = errormsg+ClaseSemantica.checkAsing(var3,var);
                                 sentencias_inco++;
@@ -822,26 +813,26 @@ void Leer(){}
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MAS:
-      jj_consume_token(MAS);
+      opVar = jj_consume_token(MAS);
       break;
     case MENOS:
-      jj_consume_token(MENOS);
+      opVar = jj_consume_token(MENOS);
       break;
     case DIV:
-      jj_consume_token(DIV);
+      opVar = jj_consume_token(DIV);
       break;
     case MODULO:
-      jj_consume_token(MODULO);
+      opVar = jj_consume_token(MODULO);
       break;
     case MULTI:
-      jj_consume_token(MULTI);
+      opVar = jj_consume_token(MULTI);
       break;
     default:
       jj_la1[34] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
-           Compilabob.pw.print(token.image+" ");
+                   Compilabob.pw.print(token.image+" ");
   }
 
   final public void Variable_dato() throws ParseException {
@@ -985,8 +976,35 @@ void Leer(){}
     finally { jj_save(5, xla); }
   }
 
-  private boolean jj_3R_24() {
-    if (jj_3R_25()) return true;
+  private boolean jj_3_2() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_9()) {
+    jj_scanpos = xsp;
+    if (jj_3R_10()) return true;
+    }
+    if (jj_scan_token(MAS)) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_scan_token(ENTERO)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_6()) {
+    jj_scanpos = xsp;
+    if (jj_3R_19()) {
+    jj_scanpos = xsp;
+    if (jj_3R_20()) {
+    jj_scanpos = xsp;
+    if (jj_3R_21()) return true;
+    }
+    }
+    }
     return false;
   }
 
@@ -1005,6 +1023,11 @@ void Leer(){}
     return false;
   }
 
+  private boolean jj_3R_24() {
+    if (jj_3R_25()) return true;
+    return false;
+  }
+
   private boolean jj_3_4() {
     if (jj_3R_12()) return true;
     if (jj_3R_13()) return true;
@@ -1018,6 +1041,12 @@ void Leer(){}
   private boolean jj_3R_11() {
     if (jj_scan_token(ELSE)) return true;
     if (jj_scan_token(SepIzq)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_8() {
+    if (jj_3R_14()) return true;
+    if (jj_scan_token(IDENTIFICADOR)) return true;
     return false;
   }
 
@@ -1053,12 +1082,6 @@ void Leer(){}
     jj_scanpos = xsp;
     if (jj_3R_24()) return true;
     }
-    return false;
-  }
-
-  private boolean jj_3R_8() {
-    if (jj_3R_14()) return true;
-    if (jj_scan_token(IDENTIFICADOR)) return true;
     return false;
   }
 
@@ -1109,38 +1132,6 @@ void Leer(){}
     if (jj_3R_15()) {
     jj_scanpos = xsp;
     if (jj_3R_16()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_9()) {
-    jj_scanpos = xsp;
-    if (jj_3R_10()) return true;
-    }
-    if (jj_scan_token(MAS)) return true;
-    return false;
-  }
-
-  private boolean jj_3_6() {
-    if (jj_scan_token(ENTERO)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_14() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_6()) {
-    jj_scanpos = xsp;
-    if (jj_3R_19()) {
-    jj_scanpos = xsp;
-    if (jj_3R_20()) {
-    jj_scanpos = xsp;
-    if (jj_3R_21()) return true;
-    }
-    }
     }
     return false;
   }

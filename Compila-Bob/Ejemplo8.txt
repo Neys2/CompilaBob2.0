@@ -2,10 +2,10 @@ compilar_coatl{
 	E_ n:0;
 	
 	muestra("Este es n:"+n);
-	repito hasta que (n,10):{
+	repito hasta que (n,"si"):{
 		E_ m : 3+n;
 		muestra("Este es n:"+n);
-		decide (n==3) : {
+		decide (n=3) : {
 			muestra("ESTOY EN LA VYEKTA 3 OwO ");
 		}
 	};

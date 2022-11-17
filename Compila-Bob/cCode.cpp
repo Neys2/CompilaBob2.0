@@ -12,7 +12,7 @@ float dcimal = 5.4 ;
 cout << "Dame tu edad: " << endl ;
 cin >> n;
 
-if ( n == "yoyo" ) { 
+if ( n == 3 ) { 
 cout << "Este es un if, n es igual a 3 " << endl ;
 } 
 else { 

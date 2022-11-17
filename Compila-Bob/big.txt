@@ -41,8 +41,6 @@ cadena : "No soy";
 
 	repito  {
 		#código a ejecutar a ejecutar en caso de que la condición sea VERDAD
-		#se aumenta el contador n de forma manual.
-		: n+1;
 		muestra("MI CARA")
 		decide (num != varEnt | num1) : {
 			repito : {

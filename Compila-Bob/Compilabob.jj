@@ -28,9 +28,7 @@ public class Compilabob {
 	String errormsg="";
 	int sentencias_inco =0;  
 	//variebales para semantica-------------------------------
-    String Type="", valor=""; //variables cache para capturar el paimp
-    String lugar = "";
-	Token var,forVar;
+	Token var,opVar;
 	boolean lectura = false;
 	public static FileWriter  fichero = null;
     public static PrintWriter pw = null;
@@ -274,8 +272,14 @@ void Ciclo_RepitoHastaQue():{
 				errormsg = errormsg+ClaseSemantica.checkVariable(var);
 				sentencias_inco++;
 			}}
-			|DataType()) {
-			}
+			|DataType())
+				{
+					var = token;
+					if(!(ClaseSemantica.checkAsing(var2,var).equals(" "))){
+						errormsg = errormsg+ClaseSemantica.checkAsing(var2,var);
+						sentencias_inco++;
+					}
+				}
 			<ParenDer>{Compilabob.pw.print(";"+var2.image+"++) ");} <ASIGNACION> 
 	<SepIzq>{Compilabob.pw.print("{\n");} (sentencias())* <SepDer>{Compilabob.pw.println("} ");} (<PuntoComa>|errorFinlinea())
 
@@ -292,7 +296,7 @@ void Ciclo_RepitoHastaQue():{
 void Declaracion():
 {
 	int td;
-	Token varIden;
+	Token varIden,t2;
 }
 {
   Variable_dato(){
@@ -302,13 +306,19 @@ void Declaracion():
 	if(ClaseSemantica.checkVariable(varIden).equals("")){
 		errormsg = errormsg+"Error semántico en la línea " +varIden.beginLine +", columna "+varIden.beginColumn +", la variable "+ varIden.image + " ya  ha sido declarada \r\n";
 		sentencias_inco++;
-		//CodigoIntermedio.tokensValue.remove((CodigoIntermedio.tokensValue.size()-1));
 	}else{
 		ClaseSemantica.InsertarSimbolo(varIden,td);
-		//CodigoIntermedio.tokensValue.add(token.image);
 	}
   } 
-  ((<ASIGNACION>{Compilabob.pw.print("= ");}/*{CodigoIntermedio.tokensValue.add(token.image);} */  Expresion())|{}) (<PuntoComa>{Compilabob.pw.print(";\n");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/|errorFinlinea())
+  ((<ASIGNACION>{Compilabob.pw.print("= ");}/*{CodigoIntermedio.tokensValue.add(token.image);} */  Expresion()
+  {
+	t2 = token;
+	if(!(ClaseSemantica.checkAsing(varIden,t2).equals(" "))){
+		errormsg = errormsg+ClaseSemantica.checkAsing(varIden,token);
+		sentencias_inco++;
+	}
+}
+ )|{}) (<PuntoComa>{Compilabob.pw.print(";\n");}|errorFinlinea())
 } 
 // ASIGNACION DE VALORES DESPUES DE UNA DECLARACION
 /*void AsignacionD():{} 
@@ -328,10 +338,8 @@ void Asignacion():
 		errormsg = errormsg+ClaseSemantica.checkVariable(varIden);
 		sentencias_inco++;
 		/*/CodigoIntermedio.tokensValue.remove((CodigoIntermedio.tokensValue.size()-1));*/
-	}else{
-		/*CodigoIntermedio.tokensValue.add(token.image);*/
 	}
-  }  <ASIGNACION>/*{Compilabob.pw.print("= ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/
+  }  <ASIGNACION>/*{Compilabob.pw.print("= ");}*/
 	( <LEER> {
 			lectura = true;
 			if(lectura==true)
@@ -348,6 +356,10 @@ void Asignacion():
 			sentencias_inco++;
 			/*CodigoIntermedio.tokensValue.remove((CodigoIntermedio.tokensValue.size()-1));*/
 		}
+		if(!ClaseSemantica.checkString(varIden,opVar,t2).equals("")){
+			errormsg = errormsg+ClaseSemantica.checkString(varIden,opVar,t2);
+			sentencias_inco++;
+		}
 	}
 } 
 
@@ -357,7 +369,7 @@ void Asignacion():
 void Expresion():{} 
 {   
  
-	Termino() ((<MAS>|<MENOS>){Compilabob.pw.print(token.image+" ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/ Termino())*
+	Termino() ((<MAS>|<MENOS>){Compilabob.pw.print(token.image+" ");} Termino())*
 
 	  
 } 
@@ -366,17 +378,17 @@ void Expresion():{}
 
 void Termino():{}
 {  
-	Factor() ((<MULTI>|<DIV>|<MODULO>){Compilabob.pw.print(token.image+" ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/ Factor())*
+	Factor() ((<MULTI>|<DIV>|<MODULO>){Compilabob.pw.print(token.image+" ");} Factor())*
 }
 void Factor():{}
 {
-	(<MENOS>{Compilabob.pw.print("-");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/ Factor()) | Primario()
+	(<MENOS>{Compilabob.pw.print("-");} Factor()) | Primario()
  
 }
 
 void Primario():{}
 { 
-	((<ParenIzq>{Compilabob.pw.print("( ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/	Expresion() <ParenDer>{Compilabob.pw.print(") ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/)  | DataType() | <IDENTIFICADOR> {Compilabob.pw.print(" "+token.image);} /*{CodigoIntermedio.tokensValue.add(token.image);}*/)
+	((<ParenIzq>{Compilabob.pw.print("( ");}	Expresion() <ParenDer>{Compilabob.pw.print(") ");})  | DataType() | <IDENTIFICADOR> {Compilabob.pw.print(" "+token.image);} )
 }
 
 
@@ -384,9 +396,8 @@ void Primario():{}
 void OpComparacion():{
 	Token var3;
 }{
-		ExpresionL(){var3 = var;} Comparadores() ExpresionL(){
-			System.out.println("Esta es var3: "+var3);
-			System.out.println("Esta es var: "+var);
+		ExpresionL(){var3 = token;} Comparadores() ExpresionL(){
+			var = token;
 			if(!(ClaseSemantica.checkAsing(var3,var).equals(" "))){
 				errormsg = errormsg+ClaseSemantica.checkAsing(var3,var);
 				sentencias_inco++;
@@ -405,7 +416,7 @@ void FactorL():{
 	Token t2;
 }
 {
-	(  DataType() | (var = <IDENTIFICADOR>{Compilabob.pw.print(token.image+" ");}/*{CodigoIntermedio.tokensValue.add(token.image);}*/ | errorNoIden()) )
+	(  DataType() | (var = <IDENTIFICADOR>{Compilabob.pw.print(token.image+" ");} | errorNoIden()) )
 }
 
 // Epsilon ---> | {}
@@ -414,7 +425,7 @@ void FactorL():{
 void DataType():{} 
 { //Tipos de datos  
 	 
-(var=<NUMERO>|var=<NUMDECIMAL> | var=<EST_LOGIC> | <CADENAS>){Compilabob.pw.print(token.image+" ");} /*{CodigoIntermedio.tokensValue.add(token.image);}*/
+(var=<NUMERO>|var=<NUMDECIMAL> | var=<EST_LOGIC> | <CADENAS>){Compilabob.pw.print(token.image+" ");} 
 } 
 void Comparadores():{}
 {
@@ -423,7 +434,7 @@ void Comparadores():{}
 |<MENOR_IGUAL>{Compilabob.pw.print("<= ");} 
 |<MAYOR_IGUAL> {Compilabob.pw.print(">= ");} 
 |<IGUALDAD> {Compilabob.pw.print("== ");} 
-|<NOTEQ>{Compilabob.pw.print("!= ");} )/*{CodigoIntermedio.tokensValue.add(token.image);}*/
+|<NOTEQ>{Compilabob.pw.print("!= ");} )
 }
 
 void Logicos():{}
@@ -437,11 +448,11 @@ void Operadores():{}
 { //Operadores para expresiones matematicas
 	LOOKAHEAD(3)
  (
-<MAS> 
-|<MENOS>  
-|<DIV> 
-|<MODULO>   
-|<MULTI> ){Compilabob.pw.print(token.image+" ");} 
+opVar = <MAS> 
+|opVar= <MENOS>  
+|opVar = <DIV> 
+|opVar = <MODULO>   
+|opVar = <MULTI> ){Compilabob.pw.print(token.image+" ");} 
 } 
 
 void Variable_dato():{} 

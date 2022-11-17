@@ -7,6 +7,7 @@ public class ClaseSemantica{
     private static ArrayList<Integer> intComp = new ArrayList();
 	private static ArrayList<Integer> decComp = new ArrayList();
 	private static ArrayList<Integer> strComp = new ArrayList();
+	private static double auxr=0;
 
     public static void InsertarSimbolo(Token identificador, int tp)
 	{
@@ -131,6 +132,52 @@ public class ClaseSemantica{
 			}
 		}
 	
+
+
+		//METODO PARA MANDAR ERROR DE RESTAR STRING
+        public static String checkString(Token TokenIzq, Token operador, Token TokenAsig){
+        
+            int tipoIdent1=0;
+            int tipoIdent2=0;	
+
+
+            if(TokenIzq.kind != 38 && TokenIzq.kind != 40 && TokenIzq.kind != 39){
+            if(tabla.get(TokenIzq.image) == null || operador == null) {
+				return "";
+			}
+            tipoIdent1 = (Integer)tabla.get(TokenIzq.image);
+        	}
+
+        	if(TokenAsig.kind != 38 && TokenAsig.kind != 40 && TokenAsig.kind != 39){
+        	if(tabla.get(TokenAsig.image) == null  || operador == null) {
+				return "";
+			}
+            tipoIdent2 = (Integer)tabla.get(TokenAsig.image);
+        	}
+			
+			//35 es el valor de tipo de dato String
+            if (tipoIdent1 == 36 && tipoIdent2 == 36||TokenIzq.kind == 40 && TokenAsig.kind == 40|| tipoIdent1 == 36 && TokenAsig.kind == 38 || tipoIdent1 == 36 &&  TokenAsig.kind == 39|| tipoIdent1 == 36 && TokenAsig.kind == 40
+            	||TokenIzq.kind == 38 && tipoIdent2 == 36||TokenIzq.kind == 39 && tipoIdent2 == 36 ||TokenIzq.kind == 40 && tipoIdent2 == 36
+            	|| tipoIdent1 == 36 && tipoIdent2 == 34 || tipoIdent1 == 34 && tipoIdent2 == 36 || tipoIdent1 == 33 && tipoIdent2 == 36 || tipoIdent1 == 36 && tipoIdent2 == 33
+            	|| TokenIzq.kind == 38  && TokenAsig.kind == 40|| TokenIzq.kind == 40 && TokenAsig.kind == 38|| tipoIdent1 == 34 &&  TokenAsig.kind == 40){
+				switch(operador.image) {
+					case ">=":
+					case "<=":
+					case ">":
+					case "<":
+					case "-":
+					case "+":
+					case "*":
+					case "/":
+						return "Error semántico en la línea: "+ operador.beginLine +" columna: "+ operador.beginColumn+" los tipos de datos String no pueden usar el operador "+ operador.image;
+				}
+            }
+            if(tipoIdent1 == 34 || tipoIdent1 == 35 || TokenIzq.kind == 38 || TokenIzq.kind == 39){
+            	auxr=1;
+            }
+			
+            return "";
+        }
 
      
 
