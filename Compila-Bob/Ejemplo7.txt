@@ -1,6 +1,5 @@
 compilar_coatl{
-	#Declaración de variable entera
-	varto: @ ; 
+	#Declaración de variable entera 
         E_ varEnt : 65;
 	#Ejemplo de estructura de desición
 	decide ( num1 = varEnt   ) : {
@@ -9,6 +8,8 @@ compilar_coatl{
 		decide (num = 0) : {
 		 # (varEnt | num1)
 		}
-	} sino { E_ valo: 7;  };
+	} sino { 
+		E_ valo: 7;  
+		}
 
 }ejecutar_coatl

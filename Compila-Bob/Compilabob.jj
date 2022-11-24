@@ -452,7 +452,7 @@ opVar = <MAS>
 |opVar= <MENOS>  
 |opVar = <DIV> 
 |opVar = <MODULO>   
-|opVar = <MULTI> ){Compilabob.pw.print(token.image+" ");} 
+|opVar = <MULTI> ){Compilabob.pw.print(" "+token.image);} 
 } 
 
 void Variable_dato():{} 

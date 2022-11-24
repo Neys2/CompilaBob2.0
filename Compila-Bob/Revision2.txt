@@ -1,0 +1,87 @@
+compilar_coatl{
+#Programa que identifique el mayor, el menor, suma resta mult de ambos y los 3 intermedios que lo mande a imprimir 5 veces.
+E_ a;
+E_ b;
+E_ c;
+E_ d;
+E_ e;
+E_ X;
+L_prueba: Falso;
+E_ i : 0;
+muestra("Escribe 5 numeros enteros");
+a : recibir;
+b : recibir;
+c : recibir;
+d : recibir;
+e : recibir;
+
+decide(a<b):{
+	Y: a;
+	a: b;
+	b: 
+	}sino{
+		mayor : a;
+		decide(b>mayor):{
+			mayor : b;
+		}sino{
+			decide(c>mayor):{
+				mayor : c;
+			}sino{
+				decide(d>mayor):{
+					mayor : d;
+				}sino{
+					decide(e>mayor):{
+						mayor : e;
+					}
+				};
+			};
+		};
+	};
+
+
+decide(a>b):{
+	mayor : a;
+}sino{
+	decide(b>mayor):{
+		mayor: b;
+	}sino{
+		decide(c>mayor):{
+			mayor : c;
+		}sino{
+			decide(d>mayor):{
+				mayor : d;
+			}sino{
+				decide(e>mayor):{
+					mayor : e;
+				}
+			};
+		};
+	};
+};
+E_ suma : mayor+menor;
+E_ resta : mayor-menor;
+E_ mult : mayor*menor;
+muestra("Suma: "+suma);
+muestra("Resta: "+resta);
+muestra("Multiplicacion: "+mult);
+
+
+repito:{
+	i: i+1;
+	decide((a!=menor) && (a!=mayor)):{
+		muestra("a: "+a);
+	}
+	decide((b!=menor) && (b!=mayor)):{
+		muestra("b: "+b);
+	}
+	decide((c!=menor) && (c!=mayor)):{
+		muestra("c: "+c);
+	}
+	decide((d!=menor) && (d!=mayor)):{
+		muestra("d: "+d);
+	}
+	decide((e!=menor) && (e!=mayor)):{
+		muestra("e: "+e);
+	}
+} mientras(i<20);
+}ejecutar_coatl

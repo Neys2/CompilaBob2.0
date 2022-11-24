@@ -6,8 +6,8 @@ compilar_coatl{
 	cadena : recibir;
 	#n:6;
 	D_ dcimal: 5.4;
-	muestra("Dame tu edad: ");
-	n : recibir;
+	#muestra("Dame tu edad: ");
+	#n : recibir;
 	decide (n=3) : {
 			muestra("Este es un if, n es igual a 3 ");
 		}sino{

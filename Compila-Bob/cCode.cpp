@@ -3,31 +3,124 @@
 using namespace std;
 int main()
 { 
-int n = 5 + 30 - 20 ;
-cout << "Dame tu nombre: " << endl ;
-string cadena ;
-cin >> cadena;
+int a ;
+int b ;
+int c ;
+int d ;
+int e ;
+int n ;
+int i = 0 ;
+cout << "Escribe 5 numeros enteros" << endl ;
+cin >> a;
 
-float dcimal = 5.4 ;
-cout << "Dame tu edad: " << endl ;
-cin >> n;
+cin >> b;
 
-if ( n == 3 ) { 
-cout << "Este es un if, n es igual a 3 " << endl ;
+cin >> c;
+
+cin >> d;
+
+cin >> e;
+
+do { if ( a > b ) { 
+n =  a;
+
+a =  b;
+
+b =  n;
+
 } 
 else { 
-cout << "Este es un else, n es igual a " << n << endl ;
+if ( b > c ) { 
+n =  b;
+
+b =  c;
+
+c =  n;
+
 } 
-int x = 3 ;
-cout << "Hola! " << cadena << " voy a entrar al ciclo OwO" << endl ;
-x = ( 10 + 5 ) / 3 ;
+else { 
+if ( c > d ) { 
+n =  c;
 
-cout << x << endl ;
-do { n =  n- 1 ;
+c =  d;
 
-cout << "Este es n: " << n << endl ;
-} while ( n != 0 ) ;
-x = 5 * 2 ;
+d =  n;
 
-cout << "Este es x otra vez:" << x << endl ;
+} 
+else { 
+if ( d > e ) { 
+n =  d;
+
+d =  e;
+
+e =  n;
+
+} 
+if ( e < d ) { 
+n =  e;
+
+e =  d;
+
+d =  n;
+
+} 
+else { 
+if ( d < c ) { 
+n =  d;
+
+d =  c;
+
+c =  n;
+
+} 
+else { 
+if ( c < b ) { 
+n =  c;
+
+c =  b;
+
+b =  n;
+
+} 
+else { 
+if ( b < a ) { 
+n =  b;
+
+b =  a;
+
+a =  n;
+
+i = 1 ;
+
+} 
+else { 
+i = 1 ;
+
+} 
+} 
+} 
+} 
+} 
+} 
+} 
+} while ( i == 0 ) ;
+cout << a << b << c << d << e << endl ;
+cout << "Mayor: " << e << endl ;
+cout << "Menor: " << a << endl ;
+int suma ;
+suma =  e+  a;
+
+int resta ;
+resta =  e-  a;
+
+int mult ;
+mult =  e*  a;
+
+cout << "Suma: " << suma << endl ;
+cout << "Resta: " << resta << endl ;
+cout << "Multiplicacion: " << mult << endl ;
+do { cout << i << ".- " << b << ", " << c << ", " << d << endl ;
+i =  i+ 1 ;
+
+} while ( i < 20 ) ;
 }

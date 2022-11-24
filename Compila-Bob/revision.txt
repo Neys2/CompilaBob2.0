@@ -1,29 +1,89 @@
 compilar_coatl{
+#Programa que identifique el mayor, el menor, suma resta mult de ambos y los 3 intermedios que lo mande a imprimir 20 veces.
+E_ a;
+E_ b;
+E_ c;
+E_ d;
+E_ e;
+E_ n;
+E_ i : 0;
+muestra("Escribe 5 numeros enteros");
+a : recibir;
+b : recibir;
+c : recibir;
+d : recibir;
+e : recibir;
 
-E_ n1: recibir;
-E_ n2: recibir;
-E_ mayor;
-E_ menor;
+repito:{
+	decide(a>b):{
+		n : a;
+		a : b;
+		b : n;
+	}sino{
+		decide(b>c):{
+			n : b;
+			b : c;
+			c : n;
+		}sino{
+			decide(c>d):{
+				n : c;
+				c : d;
+				d : n;
+			}sino{
+				decide(d>e):{
+					n : d;
+					d : e;
+					e : n;
+				}
+				decide(e<d):{
+					n : e;
+					e : d;
+					d : n;
+				}sino{
+					decide(d<c):{
+						n : d;
+						d : c;
+						c : n;
+					}sino{
+						decide(c<b):{
+							n : c;
+							c : b;
+							b : n;
+						}sino{
+							decide(b<a):{
+								n : b;
+								b : a;
+								a : n;
+								i : 1;
+							}sino{
+								i : 1;
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+}mientras(i=0);
 
-E_ contador;
-decide (n1>n2):{
-mayor: n1;
-menor: n2;
-} sino{
-mayor: n2;
-menor: n1;
-};
+muestra(a+b+c+d+e);
 
-contador: 0;
-repito hasta que (contador, 3):{
-muestra("Numero mayor: "+mayor);
-contador: contador + 1;
-};
 
-contador: 0;
-repito hasta que (contador, 2):{
-muestra("Numero menor: "+menor);
-contador: contador + 1;
-};
+	muestra("Mayor: "+e);
+	muestra("Menor: "+a);
+	E_ suma;
+	suma : e + a;
+	E_ resta;
+	resta : e - a;
+	E_ mult;
+	mult : e * a;
+	muestra("Suma: "+suma);
+	muestra("Resta: "+resta);
+	muestra("Multiplicacion: "+mult);
 
+
+	repito:{
+		muestra(i+".- "+b+", "+c+", "+d);
+		i : i + 1;
+	}mientras(i<20);
 }ejecutar_coatl

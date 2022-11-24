@@ -832,7 +832,7 @@ public class Compilabob implements CompilabobConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-                   Compilabob.pw.print(token.image+" ");
+                   Compilabob.pw.print(" "+token.image);
   }
 
   final public void Variable_dato() throws ParseException {
